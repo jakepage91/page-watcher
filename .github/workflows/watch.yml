@@ -1,0 +1,69 @@
+name: Watch Paris Arbitration Week Registration
+
+on:
+  schedule:
+    # Every 2 hours = 12 checks/day = ~360 checks/month
+    # Very conservative on GitHub Actions quota (< 20 minutes/month)
+    - cron: "0 */2 * * *"
+  workflow_dispatch: # Allow manual trigger for testing
+
+permissions:
+  contents: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4 lxml
+
+      - name: Run watcher
+        env:
+          # Target URL (set in repository secrets)
+          WATCH_URL: ${{ secrets.WATCH_URL }}
+
+          # Keywords to detect registration opening (comma-separated)
+          # These will be monitored for changes
+          WATCH_KEYWORDS: ${{ secrets.WATCH_KEYWORDS }}
+
+          # Optional: CSS selector for precise targeting
+          # WATCH_SELECTOR: ${{ secrets.WATCH_SELECTOR }}
+
+          # Gmail notification (SMTP)
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          EMAIL_TO:   ${{ secrets.EMAIL_TO }}
+          EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+
+          # WhatsApp via Twilio
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN:  ${{ secrets.TWILIO_AUTH_TOKEN }}
+          WHATSAPP_FROM:      ${{ secrets.WHATSAPP_FROM }}  # e.g. whatsapp:+14155238886
+          WHATSAPP_TO:        ${{ secrets.WHATSAPP_TO }}    # e.g. whatsapp:+1234567890
+
+          # Optional: Force notification for testing
+          # FORCE_NOTIFY: ${{ secrets.FORCE_NOTIFY }}
+
+        run: |
+          python scripts/watch_page.py
+
+      - name: Commit updated state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add state/page_state.json
+          # Only commit if there are changes
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update page watch state [skip ci]"
+          git diff --quiet && git diff --staged --quiet || git push
