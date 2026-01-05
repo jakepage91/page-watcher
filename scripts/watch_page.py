@@ -177,37 +177,48 @@ def send_email(subject: str, body: str) -> bool:
 def send_whatsapp(subject: str, body: str) -> bool:
     """
     Send WhatsApp notification via Twilio API.
+    Supports multiple recipients (comma-separated).
 
     Returns:
-        True if sent successfully, False otherwise
+        True if at least one message sent successfully, False otherwise
     """
     sid = os.getenv("TWILIO_ACCOUNT_SID")
     token = os.getenv("TWILIO_AUTH_TOKEN")
     w_from = os.getenv("WHATSAPP_FROM")
-    w_to = os.getenv("WHATSAPP_TO")
+    w_to_raw = os.getenv("WHATSAPP_TO")
 
-    if not all([sid, token, w_from, w_to]):
+    if not all([sid, token, w_from, w_to_raw]):
         print("ℹ WhatsApp not configured (missing Twilio credentials)")
         return False
+
+    # Support multiple recipients (comma-separated)
+    recipients = [num.strip() for num in w_to_raw.split(",") if num.strip()]
 
     try:
         import base64
 
         auth = base64.b64encode(f"{sid}:{token}".encode()).decode()
         url = f"https://api.twilio.com/2010-04-01/Accounts/{sid}/Messages.json"
-        data = {
-            "From": w_from,
-            "To": w_to,
-            "Body": f"{subject}\n\n{body}",
-        }
         headers = {
             "Authorization": f"Basic {auth}",
         }
-        r = requests.post(url, data=data, headers=headers, timeout=30)
-        r.raise_for_status()
 
-        print(f"✓ WhatsApp sent to {w_to}")
-        return True
+        success_count = 0
+        for w_to in recipients:
+            try:
+                data = {
+                    "From": w_from,
+                    "To": w_to,
+                    "Body": f"{subject}\n\n{body}",
+                }
+                r = requests.post(url, data=data, headers=headers, timeout=30)
+                r.raise_for_status()
+                print(f"✓ WhatsApp sent to {w_to}")
+                success_count += 1
+            except Exception as e:
+                print(f"✗ WhatsApp send failed for {w_to}: {e}", file=sys.stderr)
+
+        return success_count > 0
     except Exception as e:
         print(f"✗ WhatsApp send failed: {e}", file=sys.stderr)
         return False

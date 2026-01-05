@@ -50,7 +50,7 @@ Go to your repository's **Settings → Secrets and variables → Actions** and a
    - `TWILIO_ACCOUNT_SID` - From Twilio Console
    - `TWILIO_AUTH_TOKEN` - From Twilio Console
    - `WHATSAPP_FROM` - Twilio WhatsApp number (format: `whatsapp:+14155238886`)
-   - `WHATSAPP_TO` - Your WhatsApp number (format: `whatsapp:+1234567890`)
+   - `WHATSAPP_TO` - Your WhatsApp number(s) (format: `whatsapp:+1234567890` or comma-separated for multiple: `whatsapp:+1234567890,whatsapp:+0987654321`)
 
 ### 3. Test Your Setup
 
