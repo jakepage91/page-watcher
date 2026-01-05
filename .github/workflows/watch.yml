@@ -2,9 +2,9 @@ name: Page Watcher
 
 on:
   schedule:
-    # Every 2 hours = 12 checks/day = ~360 checks/month
-    # Very conservative on GitHub Actions quota (< 20 minutes/month)
-    - cron: "0 */2 * * *"
+    # Every 45 minutes = 32 checks/day = ~960 checks/month
+    # Public repos have unlimited GitHub Actions minutes!
+    - cron: "*/45 * * * *"
   workflow_dispatch: # Allow manual trigger for testing
 
 permissions:
