@@ -217,14 +217,14 @@ def send_notifications(url: str, state: dict, metadata: dict):
     """Send notifications via all configured channels."""
     matched = metadata.get("matched_keywords", [])
 
-    subject = "🔔 Paris Arbitration Week: Page Changed!"
+    subject = "🔔 Page Watcher Alert: Change Detected!"
     body = (
         f"The monitored page has changed!\n\n"
         f"URL: {url}\n"
         f"Time (UTC): {state['last_checked']}\n"
         f"Matched keywords: {', '.join(matched) if matched else 'N/A'}\n"
         f"Detection method: {metadata.get('method', 'unknown')}\n\n"
-        f"This likely means registration has opened or important information was updated.\n\n"
+        f"The page content has been modified.\n\n"
         f"👉 Check the page now: {url}\n"
     )
 

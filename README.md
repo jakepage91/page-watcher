@@ -1,6 +1,6 @@
-# Page Watcher - Paris Arbitration Week Registration Monitor
+# Page Watcher
 
-Automated monitoring for when registration opens for Paris Arbitration Week 2026, with WhatsApp and Gmail notifications via GitHub Actions.
+Automated web page monitoring with WhatsApp and Gmail notifications via GitHub Actions. Get notified when any web page changes based on keywords or CSS selectors.
 
 ## Features
 
@@ -24,12 +24,12 @@ Go to your repository's **Settings → Secrets and variables → Actions** and a
 
 - `WATCH_URL` - The URL to monitor
   ```
-  https://parisarbitrationweek.com/event/paw-board-2026-40517/
+  https://example.com/your-page-to-monitor
   ```
 
 - `WATCH_KEYWORDS` - Comma-separated keywords to detect (case-insensitive)
   ```
-  register now,registration open,register for this event,buy tickets
+  register now,registration open,available,in stock
   ```
 
 #### Gmail Notification (Optional but Recommended)
@@ -57,7 +57,7 @@ Go to your repository's **Settings → Secrets and variables → Actions** and a
 #### Option A: Manual Workflow Trigger
 
 1. Go to **Actions** tab in your repository
-2. Select "Watch Paris Arbitration Week Registration"
+2. Select "Page Watcher"
 3. Click "Run workflow"
 4. Check the logs to see if it runs successfully
 
@@ -91,12 +91,12 @@ Make sure GitHub Actions is enabled:
 
 The script uses a **hybrid approach** for minimal false positives:
 
-1. **Keyword monitoring**: Tracks specific keywords (e.g., "register now", "registration open")
+1. **Keyword monitoring**: Tracks specific keywords you define
 2. **Full page hash**: Detects ANY content change, not just keyword changes
 3. **Result**: You'll be notified when:
-   - Registration opens (keywords appear)
-   - Any significant page change occurs
-   - The "Registration will open soon" message changes
+   - Target keywords appear or disappear
+   - Any significant page content changes
+   - The page structure or text is modified
 
 ## File Structure
 
@@ -143,8 +143,8 @@ If you're getting notified for minor changes:
 pip install -r requirements.txt
 
 # Set environment variables
-export WATCH_URL="https://parisarbitrationweek.com/event/paw-board-2026-40517/"
-export WATCH_KEYWORDS="register now,registration open"
+export WATCH_URL="https://example.com/your-page"
+export WATCH_KEYWORDS="your,keywords,here"
 
 # Run the script
 python scripts/watch_page.py

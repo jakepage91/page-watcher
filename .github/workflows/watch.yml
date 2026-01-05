@@ -1,4 +1,4 @@
-name: Watch Paris Arbitration Week Registration
+name: Page Watcher
 
 on:
   schedule:
