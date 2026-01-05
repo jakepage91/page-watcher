@@ -54,7 +54,7 @@ jobs:
           WHATSAPP_TO:        ${{ secrets.WHATSAPP_TO }}    # e.g. whatsapp:+1234567890
 
           # Optional: Force notification for testing
-          # FORCE_NOTIFY: ${{ secrets.FORCE_NOTIFY }}
+          FORCE_NOTIFY: ${{ secrets.FORCE_NOTIFY }}
 
         run: |
           python scripts/watch_page.py
